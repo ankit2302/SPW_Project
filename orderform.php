@@ -28,7 +28,11 @@ else {
 			$umob_db = $get_user_email['mobile'];
 			$uadd_db = $get_user_email['address'];
 }
-
+function sanitize_number_int($value="") {
+    return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+  }
+  $poid=sanitize_number_int($poid);
+$is_error = false;
 
 $getposts = mysqli_query($conn,"SELECT * FROM products WHERE id ='$poid'") or die(mysql_error());
 					if (mysqli_num_rows($getposts)) {
@@ -41,6 +45,8 @@ $getposts = mysqli_query($conn,"SELECT * FROM products WHERE id ='$poid'") or di
 						$item = $row['item'];
 						//$category = $row['category'];
 						$available =$row['available'];
+					}else{
+						$is_error = true;
 					}	
 
 //order
@@ -177,7 +183,14 @@ $del = $_POST['Delivery'];
 	<div class="holecontainer" style="padding: 20px 15%">
 		<div class="container signupform_content ">
 			<div>
-
+			<?php 
+				if($is_error){
+					?>
+						<h3 style="color:red;font-size:18px; padding: 5px;">Invalid ID </h3> 
+					<?php
+					die;
+				}
+				?>
 
 				<div style="float: right;">
 
