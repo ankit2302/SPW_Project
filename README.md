@@ -1,1 +1,1 @@
-Hey This is group number 06
+Hey This is group number 06.
