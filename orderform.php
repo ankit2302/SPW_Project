@@ -4,6 +4,7 @@ $conn = mysqli_connect('localhost','localhost','','grocery');
 if (isset($_REQUEST['poid'])) {
 	
 	$poid = mysqli_real_escape_string($conn,$_REQUEST['poid']);
+	
 }else {
 	header('location: index.php');
 }
