@@ -20,7 +20,11 @@ if (isset($_REQUEST['pid'])) {
 }else {
 	header('location: index.php');
 }
-
+function sanitize_number_int($value="") {
+    return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+  }
+  $pid=sanitize_number_int($pid);
+$is_error = false;
 
 $getposts = mysqli_query($conn,"SELECT * FROM products WHERE id ='$pid'") or die(mysql_error());
 					if (mysqli_num_rows($getposts)) {
@@ -33,6 +37,8 @@ $getposts = mysqli_query($conn,"SELECT * FROM products WHERE id ='$pid'") or die
 						$picture = $row['picture'];
 						$item = $row['item'];
 						$available =$row['available'];
+					}else{
+						$is_error = true;
 					}	
 
 
@@ -76,7 +82,16 @@ if (isset($_POST['addcart'])) {
 		</table>
 	</div>
 	<div style="margin: 0 97px; padding: 10px">
+	<?php 
+				if($is_error){
+					?>
 
+						<h3 style="color:red;font-size:18px; padding: 5px;">Invalid ID </h3> 
+
+					<?php
+					die;
+				}
+				?>
 		<?php 
 			echo '
 				<div style="float: left;">
@@ -95,6 +110,7 @@ if (isset($_POST['addcart'])) {
 						</p>
 
 						<div>
+						
 							<h3 style="padding: 20px 0 5px 0; font-size: 20px;">Want to buy this product? </h3>
 							<div id="srcheader">
 								

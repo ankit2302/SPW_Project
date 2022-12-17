@@ -3,18 +3,31 @@
 <?php
 ob_start();
 session_start();
+error_reporting (E_ALL ^ E_NOTICE);
+if (empty($_SESSION['token'])) {
+	$_SESSION['token'] = md5(uniqid(mt_rand(), true));
+}
+
 if (!isset($_SESSION['user_login'])) {
 }
 else {
 	header("location: index.php");
 }
+if(isset($_COOKIE['user'])){
+
+	echo "<div style='color:white; padding:20px; font-size:2.5em; background:tomato;'><b>Block User</b> <br>".$_COOKIE['user']."</div>";
+}else{
+
 
 $conn = mysqli_connect('localhost','localhost','','grocery');
 
 $emails = "";
 $passs = "";
 if (isset($_POST['login'])) {
-	if (isset($_POST['email']) && isset($_POST['password'])) {
+
+	$token = filter_var($_POST['token'], FILTER_SANITIZE_STRING);
+
+	if (isset($_POST['email']) && isset($_POST['password']) && $token && $token == $_SESSION['token'] ) {
 		$user_login = mysqli_real_escape_string($conn,$_POST['email']);
 		$user_login = mb_convert_case($user_login, MB_CASE_LOWER, "UTF-8");	
 		$password_login = mysqli_real_escape_string($conn,$_POST['password']);		
@@ -51,12 +64,20 @@ if (isset($_POST['login'])) {
 				<div class="maincontent_text" style="text-align: center; font-size: 18px;">
 				<font face="bookman">Email or Password incorrect.<br>
 				</font></div>';
+				$_SESSION['u']+=1;
+				echo "You Enter ".$_SESSION['u']."Time Wrong  UID and Password";
+				echo "<br><a href='login.php'>Try Again</a>";
+				if($_SESSION['u']>2)
+				{
+					 header('location:time.php');
+				}
+		}
 		}
 			
 		}
 	}
-
 }
+	
 $acemails = "";
 $acccode = "";
 if(isset($_POST['activate'])){
@@ -97,7 +118,7 @@ if(isset($_POST['activate'])){
 }
 
 ?>
-
+	<meta http-equiv="refresh" content="900">
 <!doctype html>
 <html>
 	<head>
@@ -136,6 +157,7 @@ if(isset($_POST['activate'])){
 							<div class="signupform_text"></div>
 							<div>
 								<form action="" method="POST" class="registration">
+								<input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
 									<div class="signup_form">
 										<?php
 											if (isset($activacc)) {

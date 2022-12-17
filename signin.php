@@ -25,6 +25,10 @@ $u_email = $_POST['email'];
 $u_mobile = $_POST['mobile'];
 $u_address = $_POST['signupaddress'];
 $u_pass = $_POST['password'];
+function sanitize_email($value="") {
+    return filter_var($value, FILTER_SANITIZE_EMAIL);
+  }
+  $u_email=sanitize_email($u_email);
 //triming name
 $_POST['first_name'] = trim($_POST['first_name']);
 $_POST['last_name'] = trim($_POST['last_name']);
