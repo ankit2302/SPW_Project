@@ -61,47 +61,32 @@ $_POST['last_name'] = trim($_POST['last_name']);
 			throw new Exception('Address can not be empty');
 			
 		}
-
-		
-		// Check if email already exists
 		
 		$check = 0;
-		$e_check = mysqli_query($conn,"SELECT email FROM `user` WHERE email='$u_email'");
+		$tmp_query="SELECT email FROM `user` WHERE email='$u_email'";
+		$e_check = mysqli_query($conn,$tmp_query);
 		$email_check = mysqli_num_rows($e_check);
 		if (strlen($_POST['first_name']) >2 && strlen($_POST['first_name']) <20 ) {
 			if (strlen($_POST['last_name']) >2 && strlen($_POST['last_name']) <20 ) {
-			if ($check == 0 ) {
 				if ($email_check == 0) {
-					if (strlen($_POST['password']) >1 ) {
-						$d = date("Y-m-d"); //Year - Month - Day
+					if (strlen($_POST['password']) >8 && strlen($_POST['password']) < 16 ) {
+						
 						$_POST['first_name'] = ucwords($_POST['first_name']);
 						$_POST['last_name'] = ucwords($_POST['last_name']);
 						$_POST['last_name'] = ucwords($_POST['last_name']);
 						$_POST['email'] = mb_convert_case($u_email, MB_CASE_LOWER, "UTF-8");
-						$_POST['password'] = md5($_POST['password']);
-						//$confirmCode   = substr( rand() * 900000 + 100000, 0, 6 );
-						// send email
-						/* $msg = "
-						...
-						
-						Your activation code: ".$confirmCode."
-						Signup email: ".$_POST['email']."
-						
-						"; */
-						//if (@mail($_POST['email'],"eBuyBD Activation Code",$msg, "From:eBuyBD <no-reply@ebuybd.xyz>")) {
+						$_POST['password'] = hash('sha256',$_POST['password']);
 							
-						$result = mysqli_query($conn,"INSERT INTO user (firstName,lastName,email,mobile,address,password) VALUES ('$_POST[first_name]','$_POST[last_name]','$_POST[email]','$_POST[mobile]','$_POST[signupaddress]','$_POST[password]')");
+						$tmp_result="INSERT INTO user (firstName,lastName,email,mobile,address,password) VALUES ('$_POST[first_name]','$_POST[last_name]','$_POST[email]','$_POST[mobile]','$_POST[signupaddress]','$_POST[password]')";		
+						$result = mysqli_query($conn,$tmp_result);
 						
-						//success message
 						$success_message = '
 						<div class="signupform_content"><h2><font face="bookman">Registration successfull!</font></h2>
 						<div class="signupform_text" style="font-size: 18px; text-align: center;">
 						<font face="bookman">
 							
 						</font></div></div>';
-						//}else {
-							//throw new Exception('Email is not valid!');
-						//}
+						
 						
 						
 					}else {
@@ -110,9 +95,6 @@ $_POST['last_name'] = trim($_POST['last_name']);
 				}else {
 					throw new Exception('Email already taken!');
 				}
-			}else {
-				throw new Exception('Username already taken!');
-			}
 			}else {
 			throw new Exception('Lastname must be 2-20 characters!');
 		}
